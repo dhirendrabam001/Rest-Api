@@ -28,5 +28,3 @@ const contactScheme = new mongoose.Schema({
 const contactModel = mongoose.model("contactdata", contactScheme);
 
 module.exports = {contactModel};
-
-
