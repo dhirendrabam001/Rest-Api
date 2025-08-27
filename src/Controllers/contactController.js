@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const {contactModel} = require("../Models/contact");
 
 const contactRequest = async (req,res) => {
@@ -22,6 +23,7 @@ const contactRequest = async (req,res) => {
 
 }
 
+// Get all data information
 const getContact = async (req,res) => {
     const userContact = await contactModel.find();
     if(!userContact) {
@@ -30,17 +32,42 @@ const getContact = async (req,res) => {
     res.status(200).json({success: true, message: "All Contact has been fetched", user: userContact});
 }
 
+// Get data and information by id
 const findContactId = async (req,res) => {
     const id = req.params.id;
     const findId = await contactModel.findById(id);
-    console.log(findId);
     if(!findId) {
         return res.status(400).json({success: false, message: "Id does not found"});
     }
     res.status(200).json({success: true, message: "Id is matched", id: findId});
     
-    
-    
 };
 
-module.exports = {contactRequest, getContact, findContactId};
+//Update contact by id;
+const updateContactById = async (req,res) => {
+    const id = req.params.id;
+    const {username, email, phone, type} = req.body;
+    const updatedata = await contactModel.findByIdAndUpdate(id, {
+        username,
+        email,
+        phone,
+        type
+    }, {new: true})
+
+    if(!updatedata) {
+        return res.status(400).json({success: false, message: "Invalid updated data"});
+    }
+    res.status(200).json({success: true, message: "Data has been updated successfully", data: updatedata});
+
+};
+
+const deleteDataById = async (req,res) => {
+    const id = req.params.id;
+    const deleteData = await contactModel.findByIdAndDelete(id);
+    if(!deleteData) {
+        return res.status(400).json({success: false, message: "Id does not found delete data"});
+    }
+    res.status(200).json({success: true, message: "Data Has Been Deleted Successfully"});
+}
+
+module.exports = {contactRequest, getContact, findContactId, updateContactById, deleteDataById};
